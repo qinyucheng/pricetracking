@@ -74,7 +74,7 @@
 
 <body>
     <div class="mt-20" id="oneTable" style=" float: left;margin-left: 10px;    width: 20%"></div>
-    <div id="showInfo" style=" float: left; margin-left:60px;margin-top:-5px;width: 75%;"><span id='group' style="color:red"></span><span id='key' style="color:blue"></span></div>
+    <div id="showInfo" style=" float: left; margin-left:60px;margin-top:-5px;"><span id='group' style="color:red"></span><span id='key' style="color:blue"></span></div>
     <div id="Edit" style=" float: left; margin-left:10px;margin-top:-5px;width: 75%;"></div>
     <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
     <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
@@ -407,11 +407,11 @@
                     "data": "Name",
 
 
-                }, {
+                }, /*{
                     "title": "Seller",
                     "data": "seller",
 
-                }, {
+                },*/ {
                     "title": "Title",
                     "data": "title",
                     "width": "40%",
@@ -424,8 +424,9 @@
                     "title": "Today ",
                     "data": "priceList",
 					 "render": function(data, type, row, meta) {
+							var today=getToday()
                         var result = removeDuplicates(data, 'date');
-                        if (result.length > 1) {
+                        if (result.length >= 1) {
                             return "<p title=" + result[0].date + " >" + result[0].price + "</p>";
                         } else {
                             return "<p style='color:green;'> --</p>";
@@ -439,12 +440,30 @@
                     "data": "priceList",
 
                     "render": function(data, type, row, meta) {
-                        var result = removeDuplicates(data, 'date');
-                        if (result.length > 1) {
-                            return "<p title=" + result[1].date + " >" + result[1].price + "</p>";
+                        
+						var result = removeDuplicates(data, 'date');
+
+                        if (result.length >= 2) {
+                            var todayPrice = result[0].price.trim();
+                            var oldPrice = result[1].price.trim();
+                            todayPrice = todayPrice.replace("$", "");
+                            oldPrice = oldPrice.replace("$", "");
+                            if (!isNaN(todayPrice) && !isNaN(oldPrice)) {
+                                if ((todayPrice - oldPrice == 0)) {
+                                    return "<p style='color:green;'> --</p>";
+                                } else {
+                                   return "<p title=" + result[1].date + " >" + result[1].price + "</p>";
+                                }
+
+                            } else {
+                                return "<p style='color:green;'> --</p>";
+
+                            }
+
                         } else {
                             return "<p style='color:green;'> --</p>";
                         }
+
 
                     }
 
@@ -459,11 +478,13 @@
                         if (result.length >= 2) {
                             var todayPrice = result[0].price;
                             var oldPrice = result[1].price;
-                            todayPrice = todayPrice.replace("$", "");
-                            oldPrice = oldPrice.replace("$", "");
+                            todayPrice = todayPrice.replace("$", "").trim();
+                            oldPrice = oldPrice.replace("$", "").trim();
                             if (!isNaN(todayPrice) && !isNaN(oldPrice)) {
                                 if ((todayPrice - oldPrice > 0)) {
                                     return "<p style='color:red;' > &#8593;</p>";
+                                } else  if (todayPrice - oldPrice == 0){
+									return "<p style='color:green;'> --</p>";
                                 } else {
                                     return "<p style='color:green;'> &#8595;</p>";
                                 }
@@ -512,7 +533,7 @@
         var ebayTable;
 
         function displayToEbayTab(data) {
-            $("#Edit").append(' </br>Eaby:</br><table class="cell-border" id="ebayTable"></table>');
+            $("#Edit").append(' </br>Eaby:</br><table class="cell-border" id="ebayTable"></table><br>');
             ebayTable = $('#ebayTable').DataTable({
                 "autoWidth": false,
                 scrollY: '50vh',
@@ -537,7 +558,7 @@
 
                 }, {
                     "title": "Name",
-                    "data": "Name",
+                    "data": "seller",
 
                 }, {
                     "title": "Sold",
@@ -545,6 +566,7 @@
                     "render": function(data, type, row, meta) {
                         var result = removeDuplicates(data, 'date');
                         if (result.length >= 1) {
+							if(result[0].sold!=-1)
                              return "<p title=" + result[0].date + "  >" + result[0].sold + "</p>";
                         } {
                             return '';
@@ -557,7 +579,13 @@
                     "render": function(data, type, row, meta) {
                         var result = removeDuplicates(data, 'date');
                         if (result.length >= 2) {
+						var sold1=result[0].sold.replace(/ /g,'');
+						var sold2=result[1].sold.replace(/ /g,'');
+							if(sold1 !=sold2 )
                             return "<p title=" + result[1].date + "  >" + result[1].sold + "</p>";
+							else {
+                            return '';
+							}
 
                         } else {
                             return '';
@@ -594,10 +622,13 @@
                             var todayPrice = result[0].price;
                             var oldPrice = result[1].price;
                             todayPrice1 = todayPrice.replace("$", "");
-                            todayPrice = todayPrice.replace(",", "");
+                            todayPrice = todayPrice.replace(",", "").trim();
                             oldPrice1 = oldPrice.replace("$", "");
-                            oldPrice = oldPrice.replace(",", "");
-
+                            oldPrice = oldPrice.replace(",", "").trim();
+							if(todayPrice=='')
+							{
+								return "<p style='color:green;margin:none'> --</p>";
+							}
                             if (!isNaN(todayPrice) && !isNaN(oldPrice)) {
                                 if (todayPrice == oldPrice) {
                                     return "<p style='color:green;margin:none'> --</p>";
@@ -729,6 +760,27 @@
                 return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos;
             });
         }
+		
+		function getToday()
+		{
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth()+1; //January is 0!
+			var yyyy = today.getFullYear();
+
+			if(dd<10) {
+				dd = '0'+dd
+			} 
+
+			if(mm<10) {
+				mm = '0'+mm
+			} 
+
+			//today = mm + '/' + dd + '/' + yyyy;
+			today = yyyy + '/' + mm + '/' + dd;
+		   return today;
+		}
+		
     </script>
 </body>
 

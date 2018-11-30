@@ -23,7 +23,7 @@ $sql .= "    searchlist.tag ";
 $sql .= "FROM ";
 $sql .= "    `price_track` ";
 $sql .= "LEFT JOIN searchlist ON searchlist.search_key = price_track.search_key ";
-$sql .= "where searchlist.`item_group`='$item_group'	and searchlist.`search_key`='$search_key'  and `status`=1 ";
+$sql .= "where searchlist.`item_group`='$item_group'	and searchlist.`search_key`='$search_key'  and `status`=1 and `rank`<20  ";
 $sql .= "ORDER BY ";
 $sql .= "   ";
 $sql .= "    searchlist.item_group, ";
