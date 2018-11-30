@@ -1,0 +1,447 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico" />
+    <!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.2.6/css/fixedColumns.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+    <style>
+        /* Ensure that the demo table scrolls */
+		th, td { white-space: nowrap; }
+		div.dataTables_wrapper {
+        width: 1500px;
+        margin: 0 auto;
+    }
+</style>
+    <!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+    <title>List Download</title>
+</head>
+
+<body>
+
+    <button type="submit" class="btn btn-success" id="submit" name=""><i class="icon-search"></i> start to download</button>
+
+    <table class="table table-border table-bordered table-bg" id="table">
+
+    </table>
+    </div>
+
+    <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+    <!--/_footer 作为公共模版分离出去-->
+
+
+    <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+    <!--script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script-->
+    <script type="text/javascript" src="lib/laypage/1.2/laypage.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+
+    <script type="text/javascript">
+        var seletedArr = [];
+
+
+        function getData(item_id) {
+            loadingLayer();
+
+            var url = " extract_html_ebay.php?action=" + item_id;
+            $.ajax({
+                url: url,
+
+                type: 'post',
+                success: function(output) {
+                    try {
+                        var obj = jQuery.parseJSON(output);
+                    } catch (e) {
+                        //alert(item_id+"This page has error, please check it!");
+                        console.log(item_id + "This page has error, please check it!");
+                        if (seletedArr.length > 0) {
+                            seletedArr.splice(0, 1);
+                            getData(seletedArr[0]);
+                        } else {
+                            layer.close(layerIndex);
+
+                            alert("Done!");
+                            location.reload();
+                        }
+                    }
+                    console.log(typeof obj);
+                    var returnType = (typeof obj);
+                    if (returnType == 'object') {
+                        $.each(obj, function(key, value) {
+                            if (key == "insertStatus" && value == "Success") {
+                                seletedArr.splice(0, 1);
+                                if (seletedArr.length > 0) {
+                                    getData(seletedArr[0]);
+                                } else {
+                                    layer.close(layerIndex);
+
+                                    alert("Done!");
+                                    location.reload();
+                                }
+
+
+                            }
+                            console.log(key + ": " + value);
+                        });
+
+                    } else {
+                        layer.close(layerIndex);
+
+                        alert(output);
+
+                    }
+
+
+                }
+
+            });
+
+        }
+
+        function getListing() {
+
+            $.ajax({
+                url: 'get_listing.php',
+
+                type: 'post',
+                success: function(output) {
+
+                    var obj = jQuery.parseJSON(output);
+                    processData(obj)
+                    //inputTable(obj);
+
+                }
+            });
+
+        }
+        var outArr = [];
+
+        function processData(obj) {
+            var test = obj;
+
+
+            for (var i in obj) {
+
+                var Mainiframesrc = obj[i].Mainiframesrc;
+                if (Mainiframesrc == null) continue;
+                var newObj = {};
+                newObj.SKU = obj[i].Custom_Label;
+                newObj.Item_ID = obj[i].Item_ID;
+                newObj.Title = obj[i].Item_Title;
+                var ListTitle = obj[i].Item_Title.toLowerCase();
+                newObj.IFRANMURL = obj[i].Mainiframesrc;
+                newObj.IFRANMimg = obj[i].iframeimgsrc;
+                newObj.Price = obj[i].Price;
+                var iframeulliArrObj = JSON.parse(obj[i].iframeulliArr);
+			
+                for (var v in iframeulliArrObj) {
+
+                    newObj["Description" + (parseInt(v)+1)] = iframeulliArrObj[v].replace(/,/g, '\,');
+                    
+                }
+				for(var l=(iframeulliArrObj.length+1); l<13;l++)
+				{
+				newObj["Description" + l] = "";
+				}
+
+                var iframeTableObj = JSON.parse(obj[i].iframeTable);
+                var count = 0;
+                for (var n in iframeTableObj) {
+                    var getTireSize = iframeTableObj[n]["Tire Size"].replace(/\s/g, '').toLowerCase();
+                    var indexOf = ListTitle.indexOf(getTireSize);
+
+                    if (indexOf !== -1) {
+                        count++;
+                        newObj["tableRow" + count] = JSON.stringify(iframeTableObj[n]);
+						if (count > 4) {
+                            alert("more than 4")
+                        }
+                    }
+
+                }
+				for(var j=count+1; j<=4;j++)
+				{
+				newObj["tableRow" + j] = "";
+				}
+
+                outArr.push(newObj);
+            }
+            inputTable(outArr)
+        }
+
+        function inputTable(dataSet) {
+            var table = $('#table').DataTable({
+                data: dataSet,
+                columns: [{
+                        data: 'Item_ID',
+                        title: "<input name='select_all' value='1' id='example-select-all' type='checkbox' />"
+                    },
+                    {
+                        data: 'Item_ID',
+                        title: "Item_ID"
+                    }, {
+                        data: 'SKU',
+                        title: "SKU"
+                    },
+                    {
+                        data: 'Title',
+                        title: "Title"
+                    },
+                    
+                    {
+                        data: 'Price',
+                        title: "Price"
+                    },
+                    {
+                        data: 'Description1',
+                        title: "Description1"
+                    },
+                    {
+                        data: 'Description2',
+                        title: "Description2"
+                    },
+                    {
+                        data: 'Description3',
+                        title: "Description3"
+                    },
+                    {
+                        data: 'Description4',
+                        title: "Description4"
+                    },
+                    {
+                        data: 'Description5',
+                        title: "Description5"
+                    },
+                    {
+                        data: 'Description6',
+                        title: "Description6"
+                    },
+                    {
+                        data: 'Description7',
+                        title: "Description7"
+                    },
+                    {
+                        data: 'Description8',
+                        title: "Description8"
+                    },
+                    {
+                        data: 'Description9',
+                        title: "Description9"
+                    },
+                    {
+                        data: 'Description10',
+                        title: "Description10"
+                    },
+                    {
+                        data: 'Description11',
+                        title: "Description11"
+                    },
+                    {
+                        data: 'Description12',
+                        title: "Description12"
+                    },
+                    
+                    {
+                        data: 'tableRow1',
+                        title: "tableRow1"
+                    },
+                    {
+                        data: 'tableRow2',
+                        title: "tableRow2"
+                    },
+                    {
+                        data: 'tableRow3',
+                        title: "tableRow3"
+                    },
+                    {
+                        data: 'tableRow4',
+                        title: "tableRow4"
+                    },
+					{
+                        data: 'IFRANMURL',
+                        title: "IFRANMURL"
+                    },
+                    {
+                        data: 'IFRANMimg',
+                        title: "IFRANMimg"
+                    }
+
+                ],
+                "pageLength": 50,
+                'columnDefs': [{
+                    'targets': 0,
+                    'searchable': false,
+                    'orderable': false,
+                    'className': 'dt-body-center',
+                    'render': function(data, type, full, meta) {
+                        return '<input type="checkbox" name="id[]" value="' +
+                            $('<div/>').text(data).html() + '">';
+                    }
+                }],
+                'order': [1, 'asc'],
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+
+            });
+
+            // Handle click on "Select all" control
+            $('#example-select-all').on('click', function() {
+                // Check/uncheck all checkboxes in the table
+                //var rows = table.rows({
+                //    'search': 'applied',
+                //}).nodes();
+                var rows = table.rows({
+                    page: 'current'
+                }).nodes();
+                var info = table.page.info();
+                $('input[type="checkbox"]', rows).prop('checked', this.checked);
+            });
+
+
+            // Handle click on checkbox to set state of "Select all" control
+            $('#table tbody').on('change', 'input[type="checkbox"]', function() {
+                // If checkbox is not checked
+                if (!this.checked) {
+                    var el = $('#example-select-all').get(0);
+                    // If "Select all" control is checked and has 'indeterminate' property
+                    if (el && el.checked && ('indeterminate' in el)) {
+                        // Set visual state of "Select all" control 
+                        // as 'indeterminate'
+                        el.indeterminate = true;
+                    }
+                }
+            });
+
+
+            $("#submit").click(function() {
+                var form = this;
+                seletedArr = [];
+                // Iterate over all checkboxes in the table
+                table.$('input[type="checkbox"]').each(function() {
+                    // If checkbox doesn't exist in DOM
+
+                    // If checkbox is checked
+                    if (this.checked) {
+                        // Create a hidden element 
+                        seletedArr.push(this.value)
+
+                    }
+
+
+                });
+                if (seletedArr.length > 0) {
+                    getData(seletedArr[0]);
+                } else {
+                    alert("please select an item!")
+                }
+
+            })
+
+
+        }
+        $(document).ready(function() {
+            getListing();
+        });
+
+        var layerIndex;
+
+        function loadingLayer() {
+            layerIndex = layer.load(1, {
+                shade: [0.3, '#fff']
+            });
+
+        }
+        /*newObj.eBay_Description="";
+        				
+        				{"Condition:":"New","Fits:":"ATV, UTV","Brand:":"WANDA","Placement on Vehicle:":"Left, Right, Front, Rear","Warranty:":"Yes","Manufacturer Part Number:":"22X11-10","Quantity:":"2","UPC:":"Does Not Apply"}
+        				Placement on Vehicle
+        				newObj.IS_Brand=obj[i].Brand
+        				newObj.IS_Manufacturer_Part_Number=obj[i]["Manufacturer Part Number"];
+        				newObj.IS_Placement_on_Vehicle=obj[i].["Placement on Vehicle"];
+        				newObj.IS_Warranty=obj[i].Warranty
+        				newObj.IS_Tread_Depth="";
+        				newObj.IS_Car_Type=obj[i].Fits
+        				newObj.IS_Tire_Type=""
+        				newObj.IS_Section_Width=""
+        				newObj.IS_Rim_Diameter=""
+        				newObj.IS_Load_Index=""
+        				newObj.IS_Speed_Index=""
+        				newObj.IS_Overall_Diameter=""
+        				newObj.IS_Tire_Brand=obj[i].Brand;
+        				newObj.IS_Max_Load="";
+        				newObj.Folder_Name="";
+        				newObj.Condition=""
+        				newObj.Status_ID="";
+        				newObj.Notes="";
+        				newObj.Is_Taxable="";
+        				newObj.Weight_Major="";
+        				newObj.Weight_Minor="";
+        				newObj.Dimension_Length="";
+        				newObj.Dimension_Width="";
+        				newObj.Dimension_Depth="";
+        				newObj.Is_Template="";
+        				newObj.eBay_Theme_Name="";
+        				newObj.eBay_Description_Wrapper_Name="";
+        				newObj.eBay_Description_CSS="";
+        				newObj.eBay_Allocation_Plan_Name="";
+        				newObj.eBay_Listing_Upgrade_Name="";
+        				newObj.eBay_Shipping_Template_Name="";
+        				newObj.eBay_Shipping_Preset_ID="";
+        				newObj.eBay_Shipping_Preset_Name="";
+        				newObj.eBay_Payment_Preset_ID="";
+        				newObj.eBay_Payment_Template_Name="";
+        				newObj.eBay_Lot_Size="";
+        				newObj.eBay_Private="";
+        				newObj.eBay_Category_1="";
+        				newObj.eBay_Category_2="";
+        				newObj.eBay_Store_Category_1="";
+        				newObj.eBay_Store_Category_2="";
+        				newObj.eBay_Best_Offer="";
+        				newObj.eBay_Auto_Decline_BO="";
+        				newObj.eBay_Auto_Decline_BO_Value="";
+        				newObj.eBay_Auto_Accept_BO="";
+        				newObj.eBay_Auto_Accept_BO_Value="";
+        				newObj.eBay_CounterID="";
+        				newObj.eBay_Self_Host_Pictures="";
+        				newObj.eBay_Picture_Pack="";
+        				newObj.Qty_To_List="";
+        				newObj.Starting_Price="";
+        				newObj.Reserve_Price="";
+        				newObj.MSRP="";
+        				newObj.Fixed_Price="";
+        				newObj.Buy_It_Now_Price="";
+        				newObj.Pictures="";
+        				*/
+    </script>
+</body>
+
+</html>

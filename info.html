@@ -1,0 +1,233 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico" />
+    <!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+    <!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+    <title></title>
+</head>
+
+<body>
+    <div class="page-container">
+
+
+        <table class="table table-border table-bordered table-bg" id="table">
+
+        </table>
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+    <script type="text/javascript" src="multiselect/jquery-ui-1.11.2.min.js"></script>
+    <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+
+    <script type="text/javascript" src="multiselect/ui.dropdownchecklist.js"></script>
+    <script type="text/javascript" src="lib/accounting.min.js"></script>
+    <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script type="text/javascript" src="lib/accounting.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/features/searchHighlight/dataTables.searchHighlight.min.js"></script>
+    <script type="text/javascript" src="https://bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
+    <script type="text/javascript" src="dataTables/sum.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.es6.js"></script>
+
+    <script type="text/javascript">
+        var seletedArr = [];
+        $(document).ready(function() {
+            console.log("ready!");
+            getInfo();
+        });
+
+        function getInfo() {
+            $.ajax({
+                url: 'getInfo.php',
+                type: 'post',
+                success: function(output) {
+                    var obj = jQuery.parseJSON(output);
+					var newData=processData(obj);
+                    displayTable(newData)
+                }
+            });
+
+
+        }
+		function processData(obj)
+		{
+			var asinArr=[];
+			var priceArr=[]
+			var priceObj={};
+			var asinObj={};
+			var returnArr=[];
+			
+			for(var i in obj)
+			{
+				
+				var asin=obj[i].asin;
+				var Name=obj[i].Name;
+				var URL=obj[i].URL;
+				var date=obj[i].date;
+				var group=obj[i].group;
+				var Marketplace=obj[i].Marketplace;
+				var imgURL=obj[i].imgURL;
+				var price=obj[i].price;
+				var title=obj[i].title;
+				var n=asinArr.indexOf(asin);
+				if(n==-1)
+				{
+					priceArr=[];
+					asinObj={};
+					priceObj={};
+					asinArr.push(asin);
+					priceObj.price=price;
+					priceObj.date=date;
+					priceArr.push(priceObj);
+					
+					asinObj.Name=Name;
+					asinObj.asin=asin;
+					asinObj.URL=URL;
+					asinObj.group=group;
+					asinObj.Marketplace=Marketplace;
+					asinObj.imgURL=imgURL;
+					asinObj.title=title;
+					asinObj.priceList=priceArr;
+					returnArr.push(asinObj);
+					
+				}
+				else
+				{
+					
+					priceObj={};
+					priceObj.price=price;
+					priceObj.date=date;
+					priceArr.push(priceObj);
+				}
+			}
+			
+			return returnArr;
+			
+			
+		}
+        var table
+
+        function displayTable(data) {
+
+            table = $('#table').DataTable({
+                "autoWidth": true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                fixedColumns: true,
+                data: data,
+				
+                columns: [{
+                        "title": "Marketplace",
+                        "data": "Marketplace"
+                    },
+                    {
+                        "title": "imgURL",
+                        "data": "imgURL",
+                        "render": function(data, type, row, meta) {
+
+                            return "<img src=" + data + "  height='42' width='42'>";
+                        }
+
+                    },
+                    {
+                        "title": "Name",
+                        "data": "Name",
+
+                    },
+                    {
+                        "title": "Title",
+                        "data": "title",
+
+                    },
+                    {
+                        "title": "Today ",
+                        "data": "priceList.0.price",
+						
+                       
+
+                    }, {
+                        "title": "Before",
+                        "data": "priceList",
+						 "render": function(data, type, row, meta) {
+								 if(data.length>1)
+							{
+								return "<p title="+data[1].date+" style='margin-bottom:0px' >"+ data[1].price+"</p>";
+								}
+								else
+								{
+								return "<p style='color:green;margin:none'> --</p>";
+								}
+								
+                            
+                        }
+
+                    }, {
+                        "title": "Trend",
+                        "data": "priceList",
+						 "render": function(data, type, row, meta) {
+						 if(data.length>=2)
+						 {
+						 
+								if((parseFloat(data[0].price)-parseFloat(data[1].price)>0))
+								{
+								return "<p style='color:red;margin-bottom:0px' > &#8593;</p>";
+								}
+								else{
+								return "<p style='color:green;margin-bottom:0px'> &#8595;</p>";
+								}
+						}
+						else
+						{
+							return "<p style='color:green;'> --</p>";
+						}
+								
+                            
+                        }
+
+                    },
+
+                ],
+
+            });
+			
+        }
+    </script>
+</body>
+
+</html>

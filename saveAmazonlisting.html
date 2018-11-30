@@ -1,0 +1,142 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico" />
+<script>
+        document.domain = '192.168.1.4'
+    </script>
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+    <!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+    <title></title>
+</head>
+
+<body>
+    <div class="page-container">
+
+      <div id='showRrutnInfo'><div><div id='showRrutnInfo_ebay'><div>
+
+        <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" id='submit' class="btn btn-danger radius"> Download</a> 
+		<!--a target="_blank" href="info.html" id="openNewTab" class="btn btn-success radius"> Price Tracking</a></div-->
+		<a  id="openNewTab" class="btn btn-success radius"> Price Tracking</a></div>
+
+        <table class="table table-border table-bordered table-bg" id="table">
+
+        </table>
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+    <script type="text/javascript" src="multiselect/jquery-ui-1.11.2.min.js"></script>
+    <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+
+    <script type="text/javascript" src="multiselect/ui.dropdownchecklist.js"></script>
+    <script type="text/javascript" src="lib/accounting.min.js"></script>
+    <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script type="text/javascript" src="lib/accounting.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/features/searchHighlight/dataTables.searchHighlight.min.js"></script>
+    <script type="text/javascript" src="https://bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
+    <script type="text/javascript" src="dataTables/sum.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.es6.js"></script>
+
+    <script type="text/javascript">
+        var seletedArr = [];
+		
+		var localFolderPath_amazon = "C:\\Users\\LibraIT01\\Desktop\\Scrapy\\amazon_item\\AmazonIphone6\\amazon\\";
+		var amazonList;
+		var ebayList;
+        $(document).ready(function() {
+            console.log("ready!");
+            getDownLoadFile();
+			 $('#openNewTab').on('click', function() {
+             parseAmazonToDatabase(amazonList[0]);
+			
+            });
+        });
+		var listArr ;
+        function getDownLoadFile() {
+            $.ajax({
+                url: 'getAmazonListing.php',
+                type: 'post',
+				 data: {
+                            amazon_Path: localFolderPath_amazon,
+                         
+
+                        },
+                success: function(output) {
+                    listArr = jQuery.parseJSON(output);
+					amazonList=listArr;
+				
+					
+                }
+            });
+
+
+        }
+		var count=0;
+		function parseAmazonToDatabase(fileName)
+		{
+			
+			
+			var path=fileName;
+			 $.ajax({
+                        url: 'amazon_extract_price2_v2.php',
+                        type: 'post',
+                        data: {
+                            Path: path,
+							
+
+                        },
+                        success: function(output) {
+                           console.log(output);
+						  
+						  count++;
+						  $( "#showRrutnInfo" ).append( '*******amazon**'+count+'*************<br>' );
+						  $( "#showRrutnInfo" ).append( '<span>'+output+'</span><br>' );
+						   amazonList.splice(0, 1);
+						   if(amazonList.length>0)
+						   {
+						    parseAmazonToDatabase(amazonList[0]);
+						   }
+						  
+                        }
+            });
+			
+			
+		
+		}
+		
+       
+    </script>
+</body>
+
+</html>

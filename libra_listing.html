@@ -1,0 +1,785 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.2.6/css/fixedColumns.dataTables.min.css" />
+    <link href="multiselect/smoothness-1.11.2/jquery-ui-1.11.2.custom.css" rel="stylesheet">
+    <link href="multiselect/ui.dropdownchecklist.themeroller.css" rel="stylesheet">
+    <style>
+        /* Ensure that the demo table scrolls */
+            th, td {
+               
+				white-space: pre-wrap; word-wrap: break-word;
+				
+            }
+			th { font-size: 12px; }
+			td { 
+			font-size: 11px; 
+			
+			height:6px;
+			}
+			#amazonTable td { 
+			font-size: 14px; 
+			
+			height:8px;
+			}
+			#ebayTable td { 
+			font-size: 14px; 
+			
+			height:8px;
+			}
+
+            .QuantityOnHand {
+                background-color: #03c13c ;
+            }
+
+            table.dataTable tbody td {
+                word-break: break-word;
+                vertical-align: top;
+            }
+
+            tr {
+                height: 20px
+            }
+
+            
+
+            span.markYellow {
+                background: yellow;
+                color: black;
+            }
+
+            span.markBlue {
+                background: blue;
+                color: white;
+            }
+
+            button.dt-button.buttons-excel.buttons-html5 {
+                margin-left: 100px;
+            }
+
+            div.container {
+                width: 80%;
+            }
+			table tbody tr.selected td {
+    background-color: #f2ec2ed9;}
+
+        </style>
+    <title>product</title>
+</head>
+
+<body>
+    <div class="text-c"> Sellers:
+
+        <select id="s5a" class="s5a" multiple="" style="display: none;">
+
+        </select>
+
+    </div>
+    <div class="mt-20" id="oneTable" style=" float: left;margin-left: 10px;    width: 100%"></div>
+    <div id="showInfo" style=" float: left; margin-left:60px;margin-top:-5px;width: 75%;"><span id='group'></span><span id='key'></span></div>
+    <div id="Edit" style=" float: left; margin-left:10px;margin-top:-5px;width: 75%;"></div>
+
+    <script type="text/javascript" src="multiselect/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="multiselect/jquery-ui-1.11.2.min.js"></script>
+    <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+
+    <script type="text/javascript" src="multiselect/ui.dropdownchecklist.js"></script>
+    <script type="text/javascript" src="lib/accounting.min.js"></script>
+    <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+    <script type="text/javascript" src="dataTables/sum.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.es6.js"></script>
+
+    <script type="text/javascript">
+        var editor;
+        // use a global for the submit and return data rendering in the examples
+        var width = $(window).width();
+        var height = $(window).height();
+        var setHeigth = ($(window).height() - 160);
+
+        var setWidth = ($(window).width() - 300);
+
+        if ((width >= 1024) && (height >= 768)) { //do something
+        } else { //do something else
+        }
+        var data = [];
+        var sellerList = [];
+		var groupedData;
+        $(document).ready(function() {
+
+            getData();
+
+        });
+
+        $(function() {
+
+            $("input[name='item']").on("keyup", function() {
+                var keyword = $(this).val(),
+                    options = {
+                        "element": "span",
+                        "className": "markYellow",
+                        "separateWordSearch": true
+                    },
+                    $ctx = $("#table tr  td:nth-child(1)");
+                $ctx.unmark({
+                    done: function() {
+                        $ctx.mark(keyword, options);
+                        $('.dataTables_scrollBody').scrollTop(0);
+                        // Go to row
+                        var scrollObj = $('.markYellow:first').position();
+
+                        if (typeof scrollObj === "undefined") {
+                            $('.dataTables_scrollBody').scrollTop(0);
+                        } else {
+                            $('.dataTables_scrollBody').scrollTop(scrollObj.top);
+                        }
+
+                        // $('.dataTables_scrollBody').animate({scrollTop: scrollObj.top}, 500);
+
+                    }
+                });
+            });
+
+        });
+
+        function getData() {
+            loadingLayer();
+            $.ajax({
+                url: 'libra_listing_getInfo.php',
+
+                type: 'post',
+                success: function(output) {
+                    layer.close(layerIndex);
+                    data = jQuery.parseJSON(output);
+                    sellerList = getSellerList(data)
+                    generateDropdownList(sellerList);
+                    groupedData = processData(sellerList, data);
+                    displayTable(data);
+
+
+                }
+            });
+
+        }
+
+        function processData(sellerList, data) {
+
+            var groupBy = function(xs, key) {
+                return xs.reduce(function(rv, x) {
+                    (rv[x[key]] = rv[x[key]] || []).push(x);
+                    return rv;
+                }, {});
+            };
+
+            return groupBy(data, 'seller');
+
+        }
+
+        function getSellerList(data) {
+            var arr = []
+            for (var i in data) {
+                var seller = data[i].seller;
+                if (seller != '') {
+                    var n = arr.indexOf(seller);
+                    if (n == -1) {
+                        arr.push(seller);
+                    }
+
+                }
+
+
+            }
+            return arr;
+
+        }
+
+        function generateDropdownList(sellersArr) {
+            var mySelect = $('#s5a');
+            mySelect.append($('<option></option>').val(-1).html('All'));
+            for (var i in sellersArr) {
+
+
+                mySelect.append(
+                    $('<option selected="selected"></option>').val(i).html(sellersArr[i])
+
+                );
+
+            }
+            $("#s5a").dropdownchecklist({
+                firstItemChecksAll: true,
+
+                onComplete: function(selector) {
+                    var selectorArr = [];
+
+                    for (i = 0; i < selector.options.length; i++) {
+
+
+                        if (selector.options[i].selected == true) {
+
+                           
+                            selectorArr.push(selector.options[i].innerText)
+
+                        }
+
+                    }
+					var newArr=processSelectedData(selectorArr);
+					displayTable(newArr) 
+                }
+
+
+            });
+
+
+        }
+		
+		function processSelectedData(selectorArr)
+		{
+			var newArr=[];
+			var newArr2=[];
+			
+			for(var i in  selectorArr)
+			{
+				if(selectorArr[i]=='All')
+				{
+					newArr=data;
+					return newArr;
+				}
+				else
+				{
+				newArr=newArr.concat(groupedData[selectorArr[i]]);
+				}
+				
+			}
+			return newArr;
+		
+		}
+
+        function displayTable(result) {
+
+            $("#oneTable").empty();
+            $("#oneTable").append(' <table class="cell-border" id="table"></table>');
+
+            //generateDropdownList(customersArr);
+            table = $('#table').DataTable({
+
+                scrollY: setHeigth,
+                searching: true,
+                ordering: true,
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                fixedColumns: true,
+                bInfo: true,
+                data: result,
+
+                "columns": [{
+                    "title": "imgurl",
+                    "data": "imgurl",
+					 "render": function(data, type, row, meta) {
+
+                        return '<a href="' + row.url + '" target="_blank"  name="newtab"><img src="' + data + '"  height="42" width="42"></a>';
+                    }
+                }, {
+                    "title": "title",
+                    "data": "title"
+                }, {
+                    "title": "brand",
+                    "data": "brand"
+                }, {
+                    "title": "isavailable",
+                    "data": "isavailable"
+                }, {
+                    "title": "price",
+                    "data": "price"
+                }, {
+                    "title": "seller",
+                    "data": "seller"
+                }, ],
+
+            });
+
+            $('#table tbody').on('click', 'tr', function() {
+                $("#Edit").empty();
+                var rowObj = table.row(this).data();
+                //getPriceInfo(rowObj);
+
+
+            });
+
+        }
+
+        function getPriceInfo(obj) {
+            loadingLayer();
+            $.ajax({
+                url: 'pricetracking_getPrice_v2.php',
+                data: {
+                    item_group: obj.item_group,
+                    search_key: obj.search_key,
+
+                },
+                type: 'post',
+                success: function(output) {
+                    layer.close(layerIndex);
+                    data = jQuery.parseJSON(output);
+                    var AmazonArr = [];
+                    var EbayArr = [];
+                    for (var i in data) {
+                        var Marketplace = data[i].marketplace;
+                        if (Marketplace == 'amazon') {
+                            AmazonArr.push(data[i])
+                        } else if (Marketplace == 'ebay') {
+                            EbayArr.push(data[i])
+                        }
+                    }
+                    var amazonData = processDataAmazon(AmazonArr);
+                    var ebayData = processDataEbay(EbayArr);
+                    var newData = amazonData.concat(ebayData);
+                    displayToAmazonTab(newData);
+                    //displayToEbayTab(ebayData)
+
+                }
+            });
+
+        }
+
+        function processDataAmazon(obj) {
+            var asinArr = [];
+            var priceArr = []
+            var priceObj = {};
+            var asinObj = {};
+            var returnArr = [];
+
+            for (var i in obj) {
+
+                var group = obj[i].item_group;
+                var search_key = obj[i].search_key;
+                var asin = obj[i].ASIN;
+                var Marketplace = obj[i].marketplace;
+                var Name = obj[i].brand;
+                var price = obj[i].price;
+                var title = obj[i].title;
+                var imgURL = obj[i].imgURL;
+                var seller = obj[i].seller;
+                var sold = obj[i].sold;
+                var rank = obj[i].rank;
+                var date = obj[i].DATE;
+                var URL = obj[i].item_url;
+
+                var n = asinArr.indexOf(asin);
+                if (n == -1) {
+                    priceArr = [];
+                    asinObj = {};
+                    priceObj = {};
+                    asinArr.push(asin);
+                    priceObj.price = price;
+                    priceObj.date = date;
+                    priceArr.push(priceObj);
+
+                    asinObj.Name = Name;
+                    asinObj.asin = asin;
+                    asinObj.URL = URL;
+                    asinObj.group = group;
+                    asinObj.Marketplace = Marketplace;
+                    asinObj.imgURL = imgURL;
+                    asinObj.title = title;
+                    asinObj.priceList = priceArr;
+                    asinObj.seller = seller;
+                    asinObj.sold = sold;
+                    asinObj.rank = rank;
+                    asinObj.search_key = search_key;
+                    returnArr.push(asinObj);
+
+                } else {
+
+                    priceObj = {};
+                    priceObj.price = price;
+                    priceObj.date = date;
+                    priceArr.push(priceObj);
+                }
+            }
+
+            return returnArr;
+
+        }
+
+        function processDataEbay(obj) {
+            var asinArr = [];
+            var priceArr = []
+            var soldArr = []
+            var priceObj = {};
+            var asinObj = {};
+            var returnArr = [];
+
+            for (var i in obj) {
+
+                var group = obj[i].item_group;
+                var search_key = obj[i].search_key;
+                var asin = obj[i].ASIN;
+                var Marketplace = obj[i].marketplace;
+                var Name = obj[i].brand;
+                var price = obj[i].price;
+                var title = obj[i].title;
+                var imgURL = obj[i].imgURL;
+                var seller = obj[i].seller;
+                var sold = obj[i].sold;
+                var rank = obj[i].rank;
+                var date = obj[i].DATE;
+                var URL = obj[i].item_url;
+                if (asin == '132472185107') {
+                    console.log(asin);
+                }
+                var n = asinArr.indexOf(asin);
+                if (n == -1) {
+                    priceArr = [];
+                    soldArr = [];
+                    asinObj = {};
+                    priceObj = {};
+                    asinArr.push(asin);
+                    priceObj.price = price;
+                    priceObj.date = date;
+                    priceArr.push(priceObj);
+                    soldObj = {};
+                    soldObj.sold = sold;
+                    soldObj.date = date;
+                    soldArr.push(soldObj);
+                    asinObj.Name = Name;
+                    asinObj.asin = asin;
+                    asinObj.URL = URL;
+                    asinObj.group = group;
+                    asinObj.Marketplace = Marketplace;
+                    asinObj.imgURL = imgURL;
+                    asinObj.title = title;
+                    asinObj.soldList = soldArr;
+                    asinObj.priceList = priceArr;
+                    asinObj.seller = seller;
+                    asinObj.search_key = search_key;
+
+                    asinObj.rank = rank;
+                    returnArr.push(asinObj);
+
+                } else {
+
+                    priceObj = {};
+                    priceObj.price = price;
+                    priceObj.date = date;
+                    priceArr.push(priceObj);
+                    soldObj = {};
+                    soldObj.sold = sold;
+                    soldObj.date = date;
+                    soldArr.push(soldObj);
+                }
+            }
+
+            return returnArr;
+
+        }
+        var amazonTable;
+
+        function displayToAmazonTab(data) {
+            $("#Edit").append(' Amazon:<table class="cell-border" id="amazonTable"></table>');
+            amazonTable = $('#amazonTable').DataTable({
+                "autoWidth": false,
+                scrollY: '150vh',
+                scrollCollapse: true,
+                searching: true,
+                paging: false,
+                select: true,
+                fixedColumns: true,
+                data: data,
+                bInfo: false,
+
+                columns: [{
+                    "title": "",
+                    "data": "imgURL",
+
+                    "render": function(data, type, row, meta) {
+
+                        return '<a href="' + row.URL + '" target="_blank"  name="newtab"><img src="' + data + '"  height="42" width="42"></a>';
+                    }
+
+                }, {
+                    "title": "Rank",
+                    "data": "rank",
+
+
+                }, {
+                    "title": "Marketplace",
+                    "data": "Marketplace",
+
+
+                }, {
+                    "title": "Name",
+                    "data": "Name",
+
+
+                }, {
+                    "title": "Seller",
+                    "data": "seller",
+
+                }, {
+                    "title": "Title",
+                    "data": "title",
+                    "width": "40%",
+                    "render": function(data, type, row, meta) {
+                        //return "<p style='width: 200px; word-wrap:break-word;display: inline-block;'>" + data + "</p>";
+                        return data;
+                    }
+
+                }, {
+                    "title": "Today ",
+                    "data": "priceList.0.price",
+
+
+                }, {
+                    "title": "Before",
+                    "data": "priceList",
+
+                    "render": function(data, type, row, meta) {
+                        if (data.length > 1) {
+                            return "<p title=" + data[1].date + " >" + data[1].price + "</p>";
+                        } else {
+                            return "<p style='color:green;'> --</p>";
+                        }
+
+                    }
+
+                }, {
+                    "title": "Trend",
+                    "data": "priceList",
+
+                    "render": function(data, type, row, meta) {
+                        if (data.length >= 2) {
+                            var todayPrice = data[0].price;
+                            var oldPrice = data[1].price;
+                            todayPrice = todayPrice.replace("$", "");
+                            oldPrice = oldPrice.replace("$", "");
+                            if ((todayPrice - oldPrice > 0)) {
+                                return "<p style='color:red;' > &#8593;</p>";
+                            } else {
+                                return "<p style='color:green;'> &#8595;</p>";
+                            }
+                        } else {
+                            return "<p style='color:green;'> --</p>";
+                        }
+
+                    }
+
+                }, {
+                    "title": "Delete",
+                    "data": "asin",
+
+                    "render": function(data, type, row, meta) {
+
+                        return '<a id="' + data + '" ping=' + row.rank + ' name="' + row.search_key + '" rel="delete"  href="javascript:;" title="Delete" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>';
+                    }
+
+                }, ],
+                "columnDefs": [{
+                    "targets": [1],
+                    "visible": false,
+                    "searchable": false
+                }],
+                "order": [
+                    [1, "asc"]
+                ]
+
+            });
+
+            $('#amazonTable').on("click", "a", function() {
+                console.log($(this).parent());
+                if (this.rel == "delete") {
+                    console.log(this.name)
+                    console.log(this.id)
+                    delectItem(this, this.id, this.name, 'amazonTable')
+                }
+
+            });
+
+        }
+        var ebayTable;
+
+        function displayToEbayTab(data) {
+            $("#Edit").append(' </br>Eaby:</br><table class="cell-border" id="ebayTable"></table>');
+            ebayTable = $('#ebayTable').DataTable({
+                "autoWidth": false,
+                scrollY: '50vh',
+                scrollCollapse: true,
+                paging: false,
+                select: true,
+                fixedColumns: true,
+                data: data,
+                bInfo: false,
+                searching: false,
+                columns: [{
+                    "title": "",
+                    "data": "imgURL",
+                    "render": function(data, type, row, meta) {
+
+                        return '<a href="' + row.URL + '" target="_blank"  name="newtab"><img src="' + data + '"  height="42" width="42"></a>';
+                    }
+
+                }, {
+                    "title": "Rank",
+                    "data": "rank",
+
+                }, {
+                    "title": "Name",
+                    "data": "Name",
+
+                }, {
+                    "title": "Sold",
+                    "data": "soldList",
+                    "render": function(data, type, row, meta) {
+                        if (data.length >= 1) {
+                            return data[0].sold;
+                        } {
+                            return '';
+                        }
+                    }
+
+                }, {
+                    "title": "p_Sold",
+                    "data": "soldList",
+                    "render": function(data, type, row, meta) {
+                        if (data.length == 2) {
+                            return "<p title=" + data[1].date + "  >" + data[1].sold + "</p>";
+
+                        } else {
+                            return '';
+                        }
+                    }
+
+                }, {
+                    "title": "Title",
+                    "data": "title",
+                    "width": "40%",
+                    "render": function(data, type, row, meta) {
+                        return data;
+                    }
+
+                }, {
+                    "title": "Today ",
+                    "data": "priceList.0.price",
+
+                }, {
+                    "title": "Before",
+                    "data": "priceList",
+                    "render": function(data, type, row, meta) {
+                        if (data.length > 1) {
+                            return "<p title=" + data[1].date + " >" + data[1].price + "</p>";
+                        } else {
+                            return "<p style='color:green;margin:none'> --</p>";
+                        }
+
+                    }
+
+                }, {
+                    "title": "Trend",
+                    "data": "priceList",
+                    "render": function(data, type, row, meta) {
+                        if (data.length >= 2) {
+                            var todayPrice = data[0].price;
+                            var oldPrice = data[1].price;
+                            todayPrice = todayPrice.replace("$", "");
+                            oldPrice = oldPrice.replace("$", "");
+                            if (todayPrice - oldPrice > 0) {
+                                return "<p style='color:red;margin-bottom:0px' > &#8593;</p>";
+                            } else if (todayPrice - oldPrice < 0) {
+                                return "<p style='color:green;margin-bottom:0px'> &#8595;</p>";
+                            } else if (todayPrice - oldPrice == 0) {
+                                return "<p style='color:green;'> --</p>";
+                            }
+                        } else {
+                            return "<p style='color:green;'> --</p>";
+                        }
+
+                    }
+
+                }, {
+                    "title": "Delete",
+                    "data": "asin",
+                    "render": function(data, type, row, meta) {
+                        //console.log(row)
+                        return '<a id="' + data + '" ping=' + row.rank + ' name="' + row.search_key + '" rel="delete" href="javascript:;" title="Delete" style="text-decoration:none"><i class="Hui-iconfont">&#xe631;</i></a>';
+                    }
+
+                }, ],
+                "columnDefs": [{
+                    "targets": [1],
+                    "visible": false,
+                    "searchable": false
+                }],
+                "order": [
+                    [1, "asc"]
+                ]
+
+            });
+
+            $('#ebayTable').on("click", "a", function() {
+                console.log($(this).parent());
+                if (this.rel == "delete") {
+                    delectItem(this, this.id, this.name, 'ebayTable')
+                }
+
+            });
+
+        }
+
+        function delectItem(obj, asin, keyword, tableName) {
+
+            $.ajax({
+                //url: 'pricetracking_deleteItem.php',
+                url: 'pricetracking_inactive_v2.php',
+                type: 'post',
+                data: {
+                    ASIN: asin,
+                    keyword: keyword,
+
+                },
+                success: function(output) {
+                    if (output == "1" || output == "2") {
+                        if (tableName == "amazonTable") {
+                            amazonTable.row($(obj).parents('tr')).remove().draw(false);
+                        } else if (tableName == "ebayTable")
+                            ebayTable.row($(obj).parents('tr')).remove().draw(false);
+
+                    } else {
+                        alert("Error");
+                    }
+                }
+            });
+        }
+        var layerIndex;
+
+        function loadingLayer() {
+            layerIndex = layer.load(1, {
+                shade: [0.3, '#fff']
+            });
+
+        }
+    </script>
+</body>
+
+</html>

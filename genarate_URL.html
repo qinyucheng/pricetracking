@@ -1,0 +1,184 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico" />
+<script>
+        document.domain = '192.168.1.4'
+    </script>
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+    <!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+    <title></title>
+</head>
+
+<body>
+    <div class="page-container">
+
+        <div class="cl pd-5 bg-1 bk-gray mt-20">
+            <label class="form-label col-xs-4 ><span class=" c-red">*</span>URL:</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="" placeholder="" id="adminName" name="adminName">
+            </div>
+            <!--label class="form-label col-xs-4" style="float: none">Marketplace：</label></br>
+            <div class="formControls col-xs-8 col-sm-9" style="width:20%;"> <span class="select-box">
+                    <select class="select" name="adminRole" size="1" id='Marketplace'>
+                        <option value="Amazon">Amazon</option>
+                        <option value="Ebay">Ebay</option>
+
+                    </select>
+                </span>
+
+            </div-->
+            <div style="margin-left: -50px;"> <span class="l"> <a href="javascript:;" id='prodcte_add' onclick="prodcte_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> Add URL</a></span></div>
+
+        </div>
+
+        <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" id='submit' class="btn btn-danger radius"> Download</a> 
+		<!--a target="_blank" href="info.html" id="openNewTab" class="btn btn-success radius"> Price Tracking</a></div-->
+		<a  id="openNewTab" class="btn btn-success radius"> Price Tracking</a></div>
+
+        <table class="table table-border table-bordered table-bg" id="table">
+
+        </table>
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+    <script type="text/javascript" src="multiselect/jquery-ui-1.11.2.min.js"></script>
+    <script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+
+    <script type="text/javascript" src="multiselect/ui.dropdownchecklist.js"></script>
+    <script type="text/javascript" src="lib/accounting.min.js"></script>
+    <script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script type="text/javascript" src="lib/accounting.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/3.2.6/js/dataTables.fixedColumns.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.7/js/dataTables.select.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/features/searchHighlight/dataTables.searchHighlight.min.js"></script>
+    <script type="text/javascript" src="https://bartaz.github.io/sandbox.js/jquery.highlight.js"></script>
+	<script type="text/javascript" src="lib/URI.js"></script>
+    <script type="text/javascript" src="dataTables/sum.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.es6.js"></script>
+
+    <script type="text/javascript">
+        var keyArr = [];
+		var amazonURLpattern="https://www.amazon.com/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=ATV+tire+19X7-8+20X7-8"
+							  
+		var ebayURLpattern="https://www.ebay.com/sch/i.html?_from=R40&_trksid=m570.l1313&_nkw=ATV+tire+21X7-10+20X11-9&_sacat=0&LH_TitleDesc=0&_osacat=0&_odkw=ATV+tire+21X7-10+20X11-9";
+		
+		var amazonURLArr =amazonURLpattern.split('?') ;
+		var amazonURLHost=amazonURLArr[0]+"?";
+		var amazonURLParams = URI.parseQuery(amazonURLArr[1]);
+		
+		var ebayURLArr =ebayURLpattern.split('?') ;
+		var ebayURLHost=ebayURLArr[0]+"?";
+		var ebayURLParams = URI.parseQuery(ebayURLArr[1]);
+        $(document).ready(function() {
+            console.log("ready!");
+            getInfo();
+			 $('#openNewTab').on('click', function() {
+               openNewPage();
+            });
+        });
+
+        function getInfo() {
+            $.ajax({
+                url: 'getSearchInfo.php',
+                type: 'post',
+                success: function(output) {
+                     keyArr = jQuery.parseJSON(output);
+                    buildAmazonURL(keyArr[0].search_key);
+                   
+                }
+            });
+
+        }
+		function buildAmazonURL(search_key)
+		{
+			amazonURLParams['field-keywords']=search_key;
+			
+			var newAmazonUrl=amazonURLHost+URI.buildQuery(amazonURLParams)
+			//console.log(newAmazonUrl);
+			 buildEbayURL(keyArr[0].search_key,newAmazonUrl)
+		}
+		
+		function buildEbayURL(search_key,newAmazonUrl)
+		{
+			ebayURLParams['_nkw']=search_key;
+			ebayURLParams['_odkw']=search_key;
+			
+			var newEbayUrl=ebayURLHost+URI.buildQuery(ebayURLParams)
+			//console.log(newEbayUrl);
+			saveToDataBase(newAmazonUrl,newEbayUrl,search_key)
+			
+		}
+		function nextUrl()
+		{
+			keyArr.splice(0,1);
+			if(keyArr.length>0)
+			{
+			
+			buildAmazonURL(keyArr[0].search_key)
+			
+			}
+			else
+			
+			{
+			//console.log('end');
+			}
+			
+		}
+		function saveToDataBase(newAmazonUrl,newEbayUrl,search_key)
+		{
+		console.log(newAmazonUrl);
+		console.log(newEbayUrl);
+		console.log(search_key);
+			 $.ajax({
+                url: 'InsertSearchURL.php',
+                type: 'post',
+				data: {
+                    URL1: newAmazonUrl,
+                    URL2: newEbayUrl,
+                    Key: search_key,
+                },
+                success: function(output) {
+                  console.log(output);
+				  nextUrl();
+                   
+                }
+            });
+			
+		}
+		
+       
+		
+    </script>
+</body>
+
+</html>
