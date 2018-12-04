@@ -1,5 +1,5 @@
 <?php
-include ('connection.php');
+include ('connection_desk.php');
 ini_set("session.use_cookies", 0);
 ini_set("session.use_only_cookies", 0);
 ini_set("session.use_trans_sid", 1);
@@ -118,7 +118,7 @@ function parseUI($link,$data,$search_key,$date)
 }
 function insert($link, $data_asin,$marketplace, $brand, $price, $title,$Imgsrc,$url,$search_key,$rank,$status,$date) {
 	
-	$result=mysqli_query($link, "SELECT * FROM price_track WHERE asin ='$data_asin'  and search_key='$search_key' ") or die ("die" .mysqli_error($link));
+	$result=mysqli_query($link, "SELECT * FROM price_track WHERE asin ='$data_asin'  and search_key='$search_key' order by date desc  ") or die ("die" .mysqli_error($link));
 while($row=mysqli_fetch_object($result))
 	{
 		//$outputArr[]=$row;
