@@ -629,6 +629,10 @@
 							{
 								return "<p style='color:green;margin:none'> --</p>";
 							}
+							if((parseFloat(oldPrice)-parseFloat(todayPrice))==0)
+							{
+								return "<p style='color:green;margin:none'> --</p>";
+							}
                             if (!isNaN(todayPrice) && !isNaN(oldPrice)) {
                                 if (todayPrice == oldPrice) {
                                     return "<p style='color:green;margin:none'> --</p>";
