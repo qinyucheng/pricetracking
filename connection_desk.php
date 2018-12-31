@@ -1,5 +1,5 @@
 <?php
-$db_host = "192.168.1.169";
+$db_host = "192.168.1.164";
 $db_user = "root";
 $db_pass = "L1bra$@5837";
 $db_name = "price_info";
